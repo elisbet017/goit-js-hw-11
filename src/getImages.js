@@ -9,13 +9,13 @@ export async function getImages(name) {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: 'true',
+      page: 1,
+      per_page: 40,
     },
   };
   try {
     const response = await axios.get(`${BASE_URL}`, options);
-    const imagesArr = response.data.hits;
-    console.log(imagesArr);
-    return imagesArr;
+    return response.data.hits;
   } catch (error) {
     throw new Error();
   }
