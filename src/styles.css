@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  background-color: rgb(88, 139, 211);
+  padding: 10px 0;
+}
