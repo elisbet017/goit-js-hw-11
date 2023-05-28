@@ -41,3 +41,7 @@ p {
   justify-content: center;
   align-items: center
 }
+
+.load-more {
+  visibility: hidden;
+}

@@ -1,22 +1,24 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
-import { getImages } from './getImages';
+import NewsApiService from './getImages';
 
 const refs = {
   form: document.querySelector('#search-form'),
-  btnSearch: document.querySelector('[type="submit"]'),
   gallery: document.querySelector('.gallery'),
+  loadMorebtn: document.querySelector('.load-more'),
 };
 
+const NewsService = new NewsApiService();
+
 refs.form.addEventListener('submit', onSearch);
+refs.loadMorebtn.addEventListener('click', onLoadMore);
 
 function onSearch(e) {
   e.preventDefault();
-  onResetMarkup();
-
-  const name = refs.form.elements.searchQuery.value;
-  getImages(name)
+  // onResetMarkup();
+  NewsService.image = e.currentTarget.elements.searchQuery.value;
+  NewsService.getImages()
     .then(res => {
       onCheckField(res);
     })
@@ -52,6 +54,16 @@ function onRenderMarkup(res) {
     )
     .join('');
   refs.gallery.innerHTML += markup;
+}
+
+function onLoadMore() {
+  NewsService.getImages()
+    .then(res => {
+      onCheckField(res);
+    })
+    .catch(error => {
+      onError();
+    });
 }
 
 function onResetMarkup() {
