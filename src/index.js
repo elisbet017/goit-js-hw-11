@@ -89,7 +89,9 @@ function onLoadMore(res) {
       onCheckCountElementsInBase(res);
       loadMore.enable();
     })
-    .catch(error);
+    .catch(error => {
+      onError();
+    });
 }
 
 function onLoadMoreScroll() {
@@ -115,3 +117,5 @@ function onBadChecking(message) {
 function onShowCountArticles(totalHits) {
   Notify.success(`Hooray! We found ${totalHits} images.`);
 }
+
+function onError() {}
