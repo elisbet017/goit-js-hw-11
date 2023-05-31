@@ -4,7 +4,7 @@ export default class NewsApiService {
   constructor() {
     this.name = '';
     this.page = 1;
-    this.per_page = 4;
+    this.per_page = 40;
     this.totalHits;
   }
 

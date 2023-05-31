@@ -1,8 +1,3 @@
-// SimpleLightbox
-// плавне прокручування
-// нескінченний скрол
-// змінити пер пейдж на 40
-
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { Notify } from 'notiflix/build/notiflix-notify-aio';
@@ -18,16 +13,15 @@ const newsService = new NewsApiService();
 const loadMore = new LoadMoreBtn({
   selector: '.load-more',
 });
-// const simplelightbox = new SimpleLightbox({
-//   elements: document.querySelectorAll('.link'),
-// });
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionSelector: 'img',
+  captionsData: 'alt',
+});
 
 loadMore.hide();
 
 refs.form.addEventListener('submit', onSearch);
 loadMore.refs.btn.addEventListener('click', onLoadMore);
-// document.addEventListener('scroll')
-// refs.gallery.addEventListener('click', onCardClick)
 
 function onSearch(e) {
   e.preventDefault();
@@ -57,25 +51,17 @@ function onCheckElementsInBase(res) {
 }
 
 function onCheckCountElementsInBase(res) {
+  onRenderMarkup(res);
+
   if (res.length < newsService.per_page) {
-    onRenderMarkup(res);
-    // simplelightbox.refresh();
     return onBadChecking(
       "We're sorry, but you've reached the end of search results."
     );
   }
-  onRenderMarkup(res);
   loadMore.show();
 }
 
-// function onCardClick() {
-//   simplelightbox.show()
-// }
-
-function onError() {}
-
 function onRenderMarkup(res) {
-  // const
   const markup = res
     .map(
       ({
@@ -91,6 +77,7 @@ function onRenderMarkup(res) {
     )
     .join('');
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+  lightbox.refresh();
   onLoadMoreScroll();
 }
 
@@ -102,9 +89,7 @@ function onLoadMore(res) {
       onCheckCountElementsInBase(res);
       loadMore.enable();
     })
-    .catch(error => {
-      onError();
-    });
+    .catch(error);
 }
 
 function onLoadMoreScroll() {
