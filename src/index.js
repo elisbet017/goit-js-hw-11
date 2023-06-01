@@ -23,37 +23,38 @@ loadMore.hide();
 refs.form.addEventListener('submit', onSearch);
 loadMore.refs.btn.addEventListener('click', onLoadMore);
 
-function onSearch(e) {
-  e.preventDefault();
-  loadMore.hide();
-
-  newsService.image = e.currentTarget.elements.searchQuery.value;
-  newsService.resetPage();
-  newsService
-    .getImages()
-    .then(res => {
-      onResetMarkup();
-      onCheckElementsInBase(res);
-    })
-    .catch(error => {
-      onError();
-    });
+async function onSearch(e) {
+  try {
+    e.preventDefault();
+    loadMore.hide();
+    newsService.image = e.currentTarget.elements.searchQuery.value.trim();
+    if (newsService.image === '') {
+      Notify.failure('Please enter something');
+      return;
+    }
+    newsService.resetPage();
+    const articles = await newsService.getImages();
+    onResetMarkup();
+    onCheckElementsInBase(articles);
+  } catch (error) {
+    onError(error);
+  }
 }
 
-function onCheckElementsInBase(res) {
-  if (res.length === 0) {
+function onCheckElementsInBase(articles) {
+  if (articles.length === 0) {
     return onBadChecking(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-  onCheckCountElementsInBase(res);
+  onCheckCountElementsInBase(articles);
   onShowCountArticles(newsService.totalHits);
 }
 
-function onCheckCountElementsInBase(res) {
-  onRenderMarkup(res);
+function onCheckCountElementsInBase(articles) {
+  onRenderMarkup(articles);
 
-  if (res.length < newsService.per_page) {
+  if (articles.length < newsService.per_page) {
     return onBadChecking(
       "We're sorry, but you've reached the end of search results."
     );
@@ -61,8 +62,8 @@ function onCheckCountElementsInBase(res) {
   loadMore.show();
 }
 
-function onRenderMarkup(res) {
-  const markup = res
+function onRenderMarkup(articles) {
+  const markup = articles
     .map(
       ({
         webformatURL,
@@ -81,17 +82,15 @@ function onRenderMarkup(res) {
   onLoadMoreScroll();
 }
 
-function onLoadMore(res) {
-  loadMore.disable();
-  newsService
-    .getImages()
-    .then(res => {
-      onCheckCountElementsInBase(res);
-      loadMore.enable();
-    })
-    .catch(error => {
-      onError();
-    });
+async function onLoadMore(articles) {
+  try {
+    loadMore.disable();
+    const articles = await newsService.getImages();
+    onCheckCountElementsInBase(articles);
+    loadMore.enable();
+  } catch (error) {
+    onError(error);
+  }
 }
 
 function onLoadMoreScroll() {
@@ -118,4 +117,4 @@ function onShowCountArticles(totalHits) {
   Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
-function onError() {}
+function onError(error) {}

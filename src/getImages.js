@@ -26,8 +26,7 @@ export default class NewsApiService {
       this.totalHits = response.data.totalHits;
       return response.data.hits;
     } catch (error) {
-      console.log(3);
-      throw new Error();
+      throw new Error(error);
     }
   }
 
