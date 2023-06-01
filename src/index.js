@@ -83,8 +83,8 @@ function onRenderMarkup(articles) {
 }
 
 async function onLoadMore(articles) {
+  loadMore.disable();
   try {
-    loadMore.disable();
     const articles = await newsService.getImages();
     onCheckCountElementsInBase(articles);
     loadMore.enable();
@@ -117,4 +117,6 @@ function onShowCountArticles(totalHits) {
   Notify.success(`Hooray! We found ${totalHits} images.`);
 }
 
-function onError(error) {}
+function onError(error) {
+  Notify.failure('Error');
+}
